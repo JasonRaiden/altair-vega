@@ -6,85 +6,57 @@
 <title>Altair &amp; Vega</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { background: #05060f; color: #e8e8f0; }
+  html, body { height: 100%; background: #04040c; color: #ece8f6; }
   body {
     font-family: Georgia, "Times New Roman", serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
-  #stars, #sky, #scene {
-    position: fixed; inset: 0; pointer-events: none;
-  }
-  #stars { z-index: 0; }
-  #sky {
-    z-index: 1;
-    background: radial-gradient(ellipse at 50% 28%, rgba(50,36,90,0.4), transparent 62%);
-  }
-  #scene { z-index: 2; }
+  #world { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; }
   .panel {
-    position: relative; z-index: 3;
-    min-height: 100vh;
+    position: relative; z-index: 2; min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
-    padding: 10vh 8vw; text-align: center;
+    padding: 12vh 8vw; text-align: center; pointer-events: none;
   }
   .panel p {
-    font-size: clamp(18px, 5.2vw, 24px);
-    line-height: 1.7; max-width: 32ch;
-    text-shadow: 0 0 18px rgba(0,0,0,0.9);
-    opacity: 0; transform: translateY(16px);
-    transition: opacity 1s ease, transform 1s ease;
+    font-size: clamp(18px, 5.1vw, 24px); line-height: 1.7; max-width: 30ch;
+    text-shadow: 0 2px 18px #04040c, 0 0 24px #04040c;
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
   }
   .panel p.show { opacity: 1; transform: none; }
-  .title { font-size: clamp(28px, 8vw, 42px) !important; font-style: italic; letter-spacing: 0.03em; }
-  .sub { font-size: clamp(14px, 3.8vw, 17px) !important; opacity: 0.7 !important; margin-top: 1em; }
+  .title { font-size: clamp(30px, 8.5vw, 44px) !important; font-style: italic; }
+  .sub { font-size: clamp(14px, 3.8vw, 17px) !important; opacity: 0.72 !important; margin-top: 0.9em; }
   .final p { font-style: italic; }
   .hint {
-    position: fixed; bottom: 6vh; left: 0; width: 100%;
-    z-index: 4; text-align: center;
-    font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase;
-    color: #8a86a8; animation: pulse 2.2s infinite;
+    position: fixed; bottom: 5.5vh; left: 0; width: 100%; z-index: 3;
+    text-align: center; pointer-events: none; font-size: 12px;
+    letter-spacing: 0.32em; text-transform: uppercase; color: #9a94b8;
   }
-  @keyframes pulse { 50% { opacity: 0.25; } }
-  .river {
-    position: absolute; left: 0; top: 62vh; width: 100%; height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(140,180,255,0.75), transparent);
-    box-shadow: 0 0 14px rgba(140,180,255,0.45);
-    opacity: 0; transition: opacity 1.2s ease;
+  #gate {
+    position: fixed; inset: 0; z-index: 20; background: #04040c;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 8vw;
   }
-  .silhouette {
-    position: absolute; bottom: 38vh; width: 48px; height: 74px;
-    background: radial-gradient(ellipse at 50% 30%, #1c1a32, transparent 72%);
-    opacity: 0; transition: opacity 1.2s ease;
+  #gate.hide { opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+  #gate button {
+    pointer-events: auto; background: transparent; color: #f0e6c8;
+    border: 1px solid rgba(240,230,200,0.35); border-radius: 999px;
+    padding: 14px 28px; font-family: Georgia, serif; font-size: 16px; letter-spacing: 0.08em;
   }
-  .silhouette.left { left: 18%; }
-  .silhouette.right { right: 18%; }
-  .bridge {
-    position: absolute; left: 20%; right: 20%; bottom: 38vh; height: 72px;
-    opacity: 0; transition: opacity 1.6s ease;
-  }
-  .bridge i {
-    position: absolute; top: 50%; width: 6px; height: 6px; border-radius: 50%;
-    background: #ffd27a; box-shadow: 0 0 8px #ffd27a;
-    transform: translate(-50%, -50%);
-  }
+  #gate .g-sub { margin-top: 14px; font-size: 13px; color: #8a86a0; }
 </style>
 </head>
 <body>
-<canvas id="stars"></canvas>
-<div id="sky"></div>
-<div id="scene">
-  <div class="river" id="river"></div>
-  <div class="silhouette left" id="silLeft"></div>
-  <div class="silhouette right" id="silRight"></div>
-  <div class="bridge" id="bridge"></div>
-</div>
-
-<section class="panel">
+<canvas id="world"></canvas>
+<div id="gate">
   <div>
-    <p class="title show">Altair &amp; Vega</p>
-    <p class="sub show">a story about two stars, and a river that never ends</p>
+    <div style="font-style:italic;font-size:28px;margin-bottom:22px;">Altair &amp; Vega</div>
+    <button id="begin">Tap to begin</button>
+    <div class="g-sub">sound + sky</div>
   </div>
-</section>
+</div>
+<section class="panel"><div><p class="title show">Altair &amp; Vega</p><p class="sub show">a story about two stars, and a river that never ends</p></div></section>
 <section class="panel"><p>Once, the sky was one unbroken light.</p></section>
 <section class="panel"><p>Then something broke it apart and scattered the pieces across the dark.</p></section>
 <section class="panel"><p>Most of them gave up and just shone where they landed.</p></section>
@@ -104,121 +76,134 @@
 <section class="panel"><p>But here is the part nobody tells you.</p></section>
 <section class="panel"><p>The bridge is not the point.</p></section>
 <section class="panel"><p>The point is that they kept looking. Every single night, for years, across a river that never moved.</p></section>
-<section class="panel final">
-  <p>I am on one side of a river right now.<br>You are on the other.<br><br>I do not know when the bridge gets built.<br>But I know I am still looking.<br><br>This story is between us.</p>
-</section>
+<section class="panel final"><p>I am on one side of a river right now.<br>You are on the other.<br><br>I do not know when the bridge gets built.<br>But I know I am still looking.<br><br>This story is between us.</p></section>
 <div class="hint" id="hint">scroll</div>
-
 <script>
 (function () {
-  var canvas = document.getElementById("stars");
+  var canvas = document.getElementById("world");
   var ctx = canvas.getContext("2d");
-  var stars = [];
-
+  var W = 0, H = 0, dpr = 1, stars = [], riverDust = [], t = 0, prog = 0;
+  var audioCtx = null, master = null, chimePlayed = false, lookPlayed = false;
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     stars = [];
-    var n = Math.floor((canvas.width * canvas.height) / 8000);
-    for (var i = 0; i < n; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.4 + 0.2,
-        a: Math.random() * Math.PI * 2,
-        s: Math.random() * 0.02 + 0.006
-      });
-    }
+    var n = Math.floor((W * H) / 7000);
+    for (var i = 0; i < n; i++) stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.5+0.2, a: Math.random()*Math.PI*2, s: 0.006+Math.random()*0.02 });
+    riverDust = [];
+    for (var j = 0; j < 70; j++) riverDust.push({ x: Math.random()*W, v: 0.15+Math.random()*0.35, r: Math.random()*1.3+0.3 });
   }
-  resize();
-  window.addEventListener("resize", resize);
-
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < stars.length; i++) {
-      var st = stars[i];
-      st.a += st.s;
-      ctx.beginPath();
-      ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(230,230,255," + (0.35 + 0.65 * Math.abs(Math.sin(st.a))) + ")";
-      ctx.fill();
-    }
-    requestAnimationFrame(drawStars);
+  resize(); window.addEventListener("resize", resize);
+  function ensureAudio() {
+    if (audioCtx) { if (audioCtx.state === "suspended") audioCtx.resume(); return; }
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      master = audioCtx.createGain(); master.gain.value = 0.22; master.connect(audioCtx.destination);
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    } catch (e) {}
   }
-  drawStars();
-
-  var audioCtx = null;
-  function unlockAudio() {
-    if (audioCtx) return;
-    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  function tone(freq, start, dur, vol) {
+    if (!audioCtx || !master) return;
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(vol, start + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    o.connect(g); g.connect(master); o.start(start); o.stop(start + dur + 0.05);
   }
-  document.addEventListener("touchstart", unlockAudio, { once: true });
-  document.addEventListener("click", unlockAudio, { once: true });
-
-  function playChime() {
-    if (!audioCtx) return;
-    var now = audioCtx.currentTime;
-    [523.25, 659.25, 783.99].forEach(function (freq, i) {
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.0001, now + i * 0.12);
-      gain.gain.exponentialRampToValueAtTime(0.16, now + i * 0.12 + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 1.3);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now + i * 0.12);
-      osc.stop(now + i * 0.12 + 1.4);
-    });
-  }
-
-  var bridge = document.getElementById("bridge");
-  for (var i = 0; i < 9; i++) {
-    var dot = document.createElement("i");
-    dot.style.left = (i * 12.5) + "%";
-    dot.style.transitionDelay = (i * 0.12) + "s";
-    bridge.appendChild(dot);
-  }
-
+  function playLook() { if (!audioCtx) return; var n = audioCtx.currentTime; tone(392, n, 1.4, 0.08); tone(493.88, n+0.18, 1.6, 0.07); }
+  function playChime() { if (!audioCtx) return; var n = audioCtx.currentTime; tone(523.25, n, 1.5, 0.14); tone(659.25, n+0.12, 1.6, 0.13); tone(783.99, n+0.24, 1.8, 0.12); tone(1046.5, n+0.42, 2, 0.08); }
+  document.getElementById("begin").addEventListener("click", function () {
+    ensureAudio();
+    var gate = document.getElementById("gate");
+    gate.classList.add("hide");
+    setTimeout(function () { gate.style.display = "none"; }, 850);
+    if (audioCtx) { var n = audioCtx.currentTime; tone(261.63, n, 1.2, 0.07); tone(392, n+0.15, 1.4, 0.06); }
+  });
   var panels = document.querySelectorAll(".panel");
-  var river = document.getElementById("river");
-  var silL = document.getElementById("silLeft");
-  var silR = document.getElementById("silRight");
-  var hint = document.getElementById("hint");
-  var chimePlayed = false;
-
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          e.target.querySelectorAll("p").forEach(function (p) { p.classList.add("show"); });
-        }
+        if (e.isIntersecting) e.target.querySelectorAll("p").forEach(function (p) { p.classList.add("show"); });
       });
-    }, { threshold: 0.35 });
+    }, { threshold: 0.38 });
     panels.forEach(function (p) { io.observe(p); });
-  } else {
-    document.querySelectorAll(".panel p").forEach(function (p) { p.classList.add("show"); });
   }
-
-  function onScroll() {
-    var vh = window.innerHeight;
-    var max = document.documentElement.scrollHeight - vh;
-    var prog = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-    hint.style.opacity = prog > 0.03 ? "0" : "0.7";
-    river.style.opacity = prog > 0.52 ? String(Math.min(1, (prog - 0.52) * 5)) : "0";
-    var so = prog > 0.58 ? Math.min(1, (prog - 0.58) * 6) : 0;
-    silL.style.opacity = String(so);
-    silR.style.opacity = String(so);
-    if (prog > 0.76) {
-      bridge.style.opacity = String(Math.min(1, (prog - 0.76) * 6));
-      if (!chimePlayed) { chimePlayed = true; playChime(); }
-    } else {
-      bridge.style.opacity = "0";
+  function updateProg() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    prog = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    document.getElementById("hint").style.opacity = prog > 0.03 ? "0" : "0.75";
+    if (prog > 0.42 && !lookPlayed) { lookPlayed = true; playLook(); }
+    if (prog > 0.78 && !chimePlayed) { chimePlayed = true; playChime(); }
+  }
+  window.addEventListener("scroll", updateProg, { passive: true });
+  function person(x, y, face, look, glow) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(face, 1);
+    var reach = look * 22, lean = look * 8;
+    ctx.fillStyle = "rgba(12,10,24,0.95)";
+    ctx.beginPath(); ctx.ellipse(lean, 28, 13, 26, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(lean, -8, 11, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = "rgba(12,10,24,0.95)"; ctx.lineWidth = 6; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(lean, 10);
+    ctx.quadraticCurveTo(lean+10+reach*0.3, 4-look*10, lean+16+reach, -6-look*16); ctx.stroke();
+    if (glow > 0) {
+      ctx.strokeStyle = "rgba(255,220,150," + (0.25+glow*0.45) + ")"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(lean+16+reach, -6-look*16); ctx.lineTo(lean+28+reach*1.4, -10-look*20); ctx.stroke();
     }
+    ctx.restore();
   }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  function draw() {
+    t += 0.016; ctx.clearRect(0, 0, W, H);
+    var bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, "#070614"); bg.addColorStop(0.55, "#0a0a1c"); bg.addColorStop(1, "#05040e");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i]; s.a += s.s;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(230,230,255," + (0.25+0.75*Math.abs(Math.sin(s.a))) + ")"; ctx.fill();
+    }
+    var riverY = H * 0.63;
+    var riverOn = Math.max(0, Math.min(1, (prog-0.28)/0.18));
+    if (riverOn > 0) {
+      var rg = ctx.createLinearGradient(0, riverY-50, 0, riverY+50);
+      rg.addColorStop(0, "rgba(80,110,200,0)");
+      rg.addColorStop(0.5, "rgba(140,170,255," + (0.18*riverOn) + ")");
+      rg.addColorStop(1, "rgba(80,110,200,0)");
+      ctx.fillStyle = rg; ctx.fillRect(0, riverY-50, W, 100);
+      for (var d = 0; d < riverDust.length; d++) {
+        var p = riverDust[d]; p.x += p.v; if (p.x > W) p.x = 0;
+        ctx.beginPath(); ctx.arc(p.x, riverY + Math.sin(t*0.8+p.x*0.02)*10, p.r, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(200,220,255," + (0.25*riverOn) + ")"; ctx.fill();
+      }
+    }
+    var look = Math.max(0, Math.min(1, (prog-0.38)/0.22));
+    var close = Math.max(0, Math.min(1, (prog-0.72)/0.18));
+    var meet = Math.max(0, Math.min(1, (prog-0.78)/0.12));
+    var leftX = W*(0.20+close*0.08), rightX = W*(0.80-close*0.08), py = riverY-18;
+    if (prog > 0.22) {
+      ctx.globalAlpha = Math.min(1, (prog-0.22)/0.12);
+      person(leftX, py, 1, look, meet); person(rightX, py, -1, look, meet);
+      ctx.globalAlpha = 1;
+    }
+    if (meet > 0) {
+      ctx.beginPath();
+      for (var k = 0; k <= 16; k++) {
+        var u = k/16, bx = leftX+(rightX-leftX)*u, by = riverY-8-Math.sin(u*Math.PI)*(28+Math.sin(t*2+k)*3);
+        if (k===0) ctx.moveTo(bx, by); else ctx.lineTo(bx, by);
+      }
+      ctx.strokeStyle = "rgba(255,210,130," + (0.55*meet) + ")"; ctx.lineWidth = 2; ctx.stroke();
+      for (var m = 0; m <= 8; m++) {
+        var u2 = m/8;
+        ctx.beginPath(); ctx.arc(leftX+(rightX-leftX)*u2, riverY-8-Math.sin(u2*Math.PI)*28, 3, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(255,220,150," + meet + ")"; ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw(); updateProg();
 })();
 </script>
 </body>
